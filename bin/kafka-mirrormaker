@@ -36,8 +36,8 @@ SERVICE_NAME=kafka
 APP_NAME=kafka-mirrormaker
 
 #The Kafka's broker
-num_streams=$(grep -Po '(?<=num\.streams=)\d+' "$KAFKA_HOME/config/mirrormaker-consumer.properties")
-whitelist=$(grep -Po '(?<=whitelist=).*' "$KAFKA_HOME/config/mirrormaker-consumer.properties")
+num_streams=$(grep -Po '(?<=num\.streams=)\d+' "$KAFKA_HOME/config/mirrormaker-source.properties")
+whitelist=$(grep -Po '(?<=whitelist=).*' "$KAFKA_HOME/config/mirrormaker-source.properties")
 source_cluster_props=$KAFKA_HOME/conf/mirrormaker-source.properties
 destination_cluster_props=$KAFKA_HOME/conf/mirrormaker-destination.properties
 KAFKA_MIRRORMAKER_CMD="$KAFKA_HOME/bin/kafka-mirror-maker.sh --consumer.config $source_cluster_props --producer.config      $destination_cluster_props --num.streams $num_streams --whitelist='$whitelist'"
