@@ -37,7 +37,7 @@ SERVICE_NAME=kafka
 APP_NAME=kafka-connect
 
 #The Kafka's broker
-KAFKA_CONNECT_CMD="$KAFKA_HOME/bin/connect-distributed.sh $KAFKA_HOME/config/connect-distributed.properties"
+KAFKA_CONNECT_CMD="$KAFKA_HOME/bin/connect-distributed.sh $KAFKA_HOME/config/kafka-connect-distributed.properties"
 
 #PID & LOG DIRs
 
