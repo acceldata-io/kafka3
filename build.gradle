@@ -57,10 +57,6 @@ allprojects {
     mavenCentral()
     maven {
         url "http://repo1.acceldata.dev/repository/odp-central/"
-        credentials {
-           username = "maverick"
-           password = "df6f57652202571c0d3090808d38e660"
-             }
        }
   }
 
