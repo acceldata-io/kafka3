@@ -19,7 +19,7 @@
 #
 
 # Home dir
-KAFKA_HOME=/usr/odp/3.2.2.0-2/kafka
+KAFKA_HOME=/usr/odp/current/kafka-broker
 # kafka env script
 . $KAFKA_HOME/config/kafka-env.sh
 #Kafka PID
