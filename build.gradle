@@ -120,6 +120,9 @@ allprojects {
 
   repositories {
     mavenCentral()
+    maven {
+      url "http://repo1.acceldata.dev/repository/odp-central/"
+    }
   }
 
   dependencyUpdates {
@@ -2952,6 +2955,11 @@ project(':connect:runtime') {
 
     testRuntimeOnly libs.slf4jlog4j
     testRuntimeOnly libs.bcpkix
+    implementation 'org.mongodb.kafka:mongo-kafka:1.6.1.3.2.2.0-2-all:all@jar'
+    implementation 'com.google.cloud:pubsub-group-kafka-connector:1.2.0.3.2.2.0-2@jar'
+    implementation 'io.aiven:aiven-kafka-connect:2.6.0.3.2.2.0-2@jar'
+    implementation 'io.aiven:aiven-kafka-connect-jdbc:6.1.2.3.2.2.0-2@jar'
+    implementation 'com.amazonaws:amazon-kinesis-kafka-connecter:0.0.8.3.2.2.0-2@jar'
   }
 
   javadoc {
