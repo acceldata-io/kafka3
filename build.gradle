@@ -122,6 +122,7 @@ allprojects {
     mavenCentral()
     maven {
       url "http://repo1.acceldata.dev/repository/odp-central/"
+      allowInsecureProtocol = true
     }
   }
 
