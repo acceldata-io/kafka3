@@ -106,10 +106,23 @@ public class ConfigurationUtilsTest extends OAuthBearerTest {
     public void testFileUnreadable() throws IOException {
         File file = TestUtils.tempFile();
 
-        if (!file.setReadable(false))
-            throw new IllegalStateException(String.format("Can't test file permissions as test couldn't programmatically make temp file %s un-readable", file.getAbsolutePath()));
+        boolean success = file.setReadable(false, false);
+        System.out.println("Attempt to set readable to false for everyone: " + success);
 
-        assertThrowsWithMessage(ConfigException.class, () -> testFile(file.toURI().toURL().toString()), "that doesn't have read permission");
+        if (!success || file.canRead()) {
+            throw new IllegalStateException(String.format(
+                    "Can't test file permissions as test couldn't programmatically make temp file %s un-readable",
+                    file.getAbsolutePath()
+            ));
+        }
+
+        System.out.println("File readable after setReadable(false, false): " + file.canRead());
+
+        assertThrowsWithMessage(
+                ConfigException.class,
+                () -> testFile(file.toURI().toURL().toString()),
+                "that doesn't have read permission"
+        );
     }
 
     @Test
