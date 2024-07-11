@@ -2069,7 +2069,7 @@ project(':connect:runtime') {
     implementation 'io.aiven:aiven-kafka-connect-s3:2.15.0@jar'
     implementation 'io.aiven:aiven-kafka-connect-jdbc:6.10.0@jar'
     implementation 'com.amazonaws:amazon-kinesis-kafka-connecter:0.0.8@jar'
-    implementation 'com.linkedin.cruisecontrol:cruise-control-metrics-reporter:2.5.84@jar'
+    implementation 'com.linkedin.cruisecontrol:cruise-control-metrics-reporter:2.5.84-11@jar'
   }
 
   javadoc {
