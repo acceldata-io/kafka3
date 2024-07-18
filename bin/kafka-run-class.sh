@@ -46,6 +46,11 @@ should_include_file() {
   fi
 }
 
+ISKAFKASERVER="false"
+if [[ "$*" =~ "kafka.Kafka" ]]; then
+    ISKAFKASERVER="true"
+fi
+
 base_dir=$(dirname $0)/..
 
 if [ -z "$SCALA_VERSION" ]; then
@@ -57,6 +62,12 @@ fi
 
 if [ -z "$SCALA_BINARY_VERSION" ]; then
   SCALA_BINARY_VERSION=$(echo $SCALA_VERSION | cut -f 1-2 -d '.')
+fi
+
+# run kafka-env.sh
+KAFKA_ENV=$base_dir/config/kafka-env.sh
+if [ -f $KAFKA_ENV ]; then
+    . $KAFKA_ENV
 fi
 
 # run ./gradlew copyDependantLibs to get all dependant jars in a local dir
