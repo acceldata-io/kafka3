@@ -19,7 +19,7 @@
 #
 
 # Home dir
-KAFKA_HOME=/usr/odp/current/kafka-broker/
+KAFKA_HOME=/usr/odp/current/kafka3-broker/
 # kafka env script
 . $KAFKA_HOME/config/kafka-env.sh
 #Kafka PID
@@ -33,8 +33,8 @@ KAFKA_USER=kafka
 
 
 #App name
-SERVICE_NAME=kafka
-APP_NAME=kafka-connect
+SERVICE_NAME=kafka3
+APP_NAME=kafka3-connect
 
 #The Kafka's broker
 KAFKA_CONNECT_CMD="$KAFKA_HOME/bin/connect-distributed.sh $KAFKA_HOME/config/kafka-connect-distributed.properties"
