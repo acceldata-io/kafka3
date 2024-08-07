@@ -19,9 +19,9 @@
 #
 
 # Home dir
-KAFKA_HOME=/usr/odp/current/kafka-broker
+KAFKA_HOME=/usr/odp/current/kafka3-broker
 # kafka env script
-. $KAFKA_HOME/config/kafka-env.sh
+. $KAFKA_HOME/config/kafka3-env.sh
 #Kafka PID
 PID=0
 
@@ -33,8 +33,8 @@ KAFKA_USER=kafka
 
 
 #App name
-APP_NAME=kafka
-SERVICE_NAME=kafka-mirrormaker
+APP_NAME=kafka3
+SERVICE_NAME=kafka3-mirrormaker
 
 #The Kafka's broker
 #KAFKA_BROKER_CMD="$KAFKA_HOME/bin/kafka-server-start.sh $KAFKA_HOME/config/server.properties"
@@ -85,7 +85,7 @@ function kafkaStart {
 
    rm -f $PID_FILE
    #nohup $KAFKA_MM_CMD >>/dev/null 2>>$ERR_FILE & echo $! > $PID_FILE
-   nohup $KAFKA_MM_CMD >>/dev/null 2>>$ERR_FILE & echo $! > /var/run/kafka/kafka-mirrormaker.pid
+   nohup $KAFKA_MM_CMD >>/dev/null 2>>$ERR_FILE & echo $! > /var/run/kafka3/kafka3-mirrormaker.pid
 
    getPID
    kafkaIsRunning $PID
