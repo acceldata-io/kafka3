@@ -233,6 +233,37 @@ if [  $JMX_REMOTE_PORT ]; then
   KAFKA_JMX_OPTS="$KAFKA_JMX_OPTS -Dcom.sun.management.jmxremote.port=$JMX_REMOTE_PORT "
 fi
 
+#Kafka MirrorMaker2 JMX metrics port configurable
+KAFKA_MIRRORMAKER2_CONFIGFILE="$base_dir"/config/connect-mirror-maker2.properties
+
+# Fetch Kafka mirrormaker2 JMX port from the configuration file if it exists
+if [ -f "$KAFKA_MIRRORMAKER2_CONFIGFILE" ]; then
+        MIRRORMAKER2_JMX_PORT=$(grep "^kafka.mirrormaker2.jmx.port=" "$KAFKA_MIRRORMAKER2_CONFIGFILE" | cut -d'=' -f2)
+fi
+
+# Use the port from the config file if found, otherwise set a default
+if [ -z "$MIRRORMAKER2_JMX_PORT" ]; then
+  KAFKA_MIRRORMAKER2_JMX_PORT=9998  # Default JMX port
+else
+  KAFKA_MIRRORMAKER2_JMX_PORT=$MIRRORMAKER2_JMX_PORT
+fi
+
+
+# Check if the process is for Kafka mm2
+IS_KAFKA_MIRRORMAKER2=false
+for arg in "$@"; do
+  if [[ "$arg" == "org.apache.kafka.connect.mirror.MirrorMaker" ]]; then
+    IS_KAFKA_MIRRORMAKER2=true
+    break
+  fi
+done
+
+# Set JMX options based on whether it's Kafka mm2
+if $IS_KAFKA_MIRRORMAKER2; then
+  # JMX options for Kafka MIRROR_MAKER2
+  KAFKA_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=$KAFKA_MIRRORMAKER2_JMX_PORT"
+fi
+
 # Log directory to use
 if [ "x$LOG_DIR" = "x" ]; then
   LOG_DIR="$base_dir/logs"
