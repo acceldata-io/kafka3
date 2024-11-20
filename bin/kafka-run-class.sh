@@ -245,7 +245,7 @@ done
 # Set JMX options based on whether it's Kafka MM2
 if $IS_KAFKA_MIRRORMAKER2; then
   # JMX options for Kafka MM2
-  KAFKA_JMX_OPTS="$KAFKA_JMX_OPTS -Dcom.sun.management.jmxremote.port=MIRRORMAKER2_JMX_PORT"
+  KAFKA_JMX_OPTS="$KAFKA_JMX_OPTS -Dcom.sun.management.jmxremote.port=$MIRRORMAKER2_JMX_PORT"
 fi
 
 # Log directory to use
