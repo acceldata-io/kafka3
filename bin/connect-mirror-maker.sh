@@ -16,7 +16,7 @@
 
 if [ $# -lt 1 ];
 then
-        echo "USAGE: $0 [-daemon] mm2.properties"
+        echo "USAGE: $0 [-daemon] connect-mirror-maker2.properties"
         exit 1
 fi
 
