@@ -233,18 +233,6 @@ if [  $JMX_REMOTE_PORT ]; then
   KAFKA_JMX_OPTS="$KAFKA_JMX_OPTS -Dcom.sun.management.jmxremote.port=$JMX_REMOTE_PORT "
 fi
 
-KAFKA_CONNECT_CONFIGFILE="$base_dir"/config/kafka-connect-distributed.properties
-
-# Fetch Kafka Connect JMX port from the configuration file if it exists
-if [ -f "$KAFKA_CONNECT_CONFIGFILE" ]; then
-    CONNECT_JMX_PORT=$(grep "^kafka.connect.jmx.port=" "$KAFKA_CONNECT_CONFIGFILE" | cut -d'=' -f2)
-fi
-
-# Use the port from the config file if found, otherwise set a default
-if [ -z "$KAFKA_CONNECT_JMX_PORT" ]; then
-  KAFKA_CONNECT_JMX_PORT=${CONNECT_JMX_PORT:-9994}  # Default JMX port for Kafka Connect
-fi
-
 # Check if the process is for Kafka Connect (ConnectDistributed or ConnectStandalone)
 IS_KAFKA_CONNECT=false
 for arg in "$@"; do
@@ -253,11 +241,10 @@ for arg in "$@"; do
     break
   fi
 done
-
 # Set JMX options based on whether it's Kafka Connect
 if $IS_KAFKA_CONNECT; then
   # JMX options for Kafka Connect
-  KAFKA_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=$KAFKA_CONNECT_JMX_PORT"
+  KAFKA_JMX_OPTS="$KAFKA_JMX_OPTS -Dcom.sun.management.jmxremote.port=$CONNECT_JMX_PORT"
 fi
 
 # Log directory to use
