@@ -233,11 +233,6 @@ if [  $JMX_REMOTE_PORT ]; then
   KAFKA_JMX_OPTS="$KAFKA_JMX_OPTS -Dcom.sun.management.jmxremote.port=$JMX_REMOTE_PORT "
 fi
 
-### KAFKA MM2 JMX port inclusion
-if [ -z "$MIRRORMAKER2_JMX_PORT" ]; then
-  KAFKA_MIRRORMAKER2_JMX_PORT=${MIRRORMAKER2_JMX_PORT:-9995}
-fi
-
 # Check if the process is for Kafka MM2
 IS_KAFKA_MIRRORMAKER2=false
 for arg in "$@"; do
@@ -250,7 +245,7 @@ done
 # Set JMX options based on whether it's Kafka MM2
 if $IS_KAFKA_MIRRORMAKER2; then
   # JMX options for Kafka MM2
-  KAFKA_JMX_OPTS="$KAFKA_JMX_OPTS -Dcom.sun.management.jmxremote.port=$KAFKA_MIRRORMAKER2_JMX_PORT"
+  KAFKA_JMX_OPTS="$KAFKA_JMX_OPTS -Dcom.sun.management.jmxremote.port=MIRRORMAKER2_JMX_PORT"
 fi
 
 # Log directory to use
