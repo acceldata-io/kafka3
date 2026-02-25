@@ -120,8 +120,8 @@ allprojects {
 
   repositories {
     // mavenCentral()
-    maven {url "https://repo1.acceldata.dev/repository/odp-central/"}
-    maven {url "https://repo1.acceldata.dev/repository/odp-central/"}
+    maven {url "https://repo1.acceldata.dev/repository/odp-staging-central/"}
+    maven {url "https://repo1.acceldata.dev/repository/odp-staging-central/"}
   }
 
   dependencyUpdates {
