@@ -99,6 +99,7 @@ versions += [
   checkstyle: "8.36.2",
   commonsCli: "1.4",
   commonsIo: "2.16.1", // ZooKeeper dependency. Do not use, this is going away.
+  commonsBeanutils: "1.11.0",
   commonsLang: "3.18.0",
   commonsValidator: "1.7",
   dropwizardMetrics: "4.1.12.1",
@@ -186,6 +187,7 @@ libs += [
   caffeine: "com.github.ben-manes.caffeine:caffeine:$versions.caffeine",
   commonsCli: "commons-cli:commons-cli:$versions.commonsCli",
   commonsIo: "commons-io:commons-io:$versions.commonsIo",
+  commonsBeanutils: "commons-beanutils:commons-beanutils:$versions.commonsBeanutils",
   commonsLang: "org.apache.commons:commons-lang3:$versions.commonsLang",
   commonsValidator: "commons-validator:commons-validator:$versions.commonsValidator",
   easymock: "org.easymock:easymock:$easymockVersion",
