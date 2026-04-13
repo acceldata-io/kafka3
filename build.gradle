@@ -1210,6 +1210,11 @@ project(':core') {
     from(project(':streams:examples').configurations.runtimeClasspath) { into("libs/") }
     from(project(':tools:tools-api').jar) { into("libs/") }
     from(project(':tools:tools-api').configurations.runtimeClasspath) { into("libs/") }
+    from(project(':storage:aiven-rsm-core').jar){ into("rsm/core/") }
+    from(project(':storage:aiven-rsm-core').configurations.runtimeClasspath) { into("rsm/core/") }
+    from(project(':storage:aiven-rsm-s3').jar) { into("rsm/s3/") }
+    from(project(':storage:aiven-rsm-s3').configurations.runtimeClasspath) { into("rsm/s3/") }
+
     duplicatesStrategy 'exclude'
   }
 
@@ -3283,6 +3288,39 @@ project(':connect:test-plugins') {
     implementation libs.slf4jApi
     implementation libs.jacksonDatabind
   }
+}
+
+project(':storage:aiven-rsm-core') {
+  archivesBaseName = "kafka-storage-aiven-rsm-core"
+
+  dependencies {
+    implementation project(':storage:storage-api')
+    implementation project(':clients')
+    implementation project(':server-common')
+    implementation libs.slf4jApi
+
+    implementation('io.aiven:tiered-storage-for-apache-kafka-core:1.1.1') {
+      exclude group: 'org.apache.iceberg'
+      exclude group: 'com.github.ben-manes.caffeine'
+    }
+    implementation 'io.aiven:tiered-storage-for-apache-kafka-storage-core:1.1.1'
+    implementation 'io.aiven:tiered-storage-for-apache-kafka-commons:1.1.1'
+  }
+
+  javadoc { enabled = false }
+}
+
+project(':storage:aiven-rsm-s3') {
+  archivesBaseName = "kafka-storage-aiven-rsm-s3"
+
+  dependencies {
+    implementation('io.aiven:tiered-storage-for-apache-kafka-storage-s3:1.1.1') {
+      exclude group: 'org.apache.iceberg'
+      exclude group: 'com.github.ben-manes.caffeine'
+    }
+  }
+
+  javadoc { enabled = false }
 }
 
 task aggregatedJavadoc(type: Javadoc, dependsOn: compileJava) {
