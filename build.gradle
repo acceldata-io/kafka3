@@ -3294,10 +3294,6 @@ project(':storage:aiven-rsm-core') {
   archivesBaseName = "kafka-storage-aiven-rsm-core"
 
   dependencies {
-    implementation project(':storage:storage-api')
-    implementation project(':clients')
-    implementation project(':server-common')
-
     implementation('io.aiven:tiered-storage-for-apache-kafka-core:1.1.1') {
       exclude group: 'org.apache.iceberg'
       exclude group: 'com.github.ben-manes.caffeine'
@@ -3318,6 +3314,8 @@ project(':storage:aiven-rsm-s3') {
       exclude group: 'org.apache.iceberg'
       exclude group: 'com.github.ben-manes.caffeine'
       exclude group: 'org.slf4j'
+      // storage-core is already included in rsm-core
+      exclude group: 'io.aiven', module: 'tiered-storage-for-apache-kafka-storage-core'
     }
   }
 
