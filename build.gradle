@@ -3302,6 +3302,7 @@ project(':storage:aiven-rsm-core') {
     implementation('io.aiven:tiered-storage-for-apache-kafka-core:1.1.1') {
       exclude group: 'org.apache.iceberg'
       exclude group: 'com.github.ben-manes.caffeine'
+      exclude group: 'org.slf4j'
     }
     implementation 'io.aiven:tiered-storage-for-apache-kafka-storage-core:1.1.1'
     implementation 'io.aiven:tiered-storage-for-apache-kafka-commons:1.1.1'
@@ -3317,6 +3318,7 @@ project(':storage:aiven-rsm-s3') {
     implementation('io.aiven:tiered-storage-for-apache-kafka-storage-s3:1.1.1') {
       exclude group: 'org.apache.iceberg'
       exclude group: 'com.github.ben-manes.caffeine'
+      exclude group: 'org.slf4j'
     }
   }
 
