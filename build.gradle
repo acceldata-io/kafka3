@@ -3297,7 +3297,6 @@ project(':storage:aiven-rsm-core') {
     implementation project(':storage:storage-api')
     implementation project(':clients')
     implementation project(':server-common')
-    implementation libs.slf4jApi
 
     implementation('io.aiven:tiered-storage-for-apache-kafka-core:1.1.1') {
       exclude group: 'org.apache.iceberg'
