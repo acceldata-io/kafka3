@@ -1217,12 +1217,16 @@ project(':core') {
     from(project(':tools:tools-api').configurations.runtimeClasspath) { into("libs/") }
     from(zipTree(configurations.aivenCore.singleFile)) {
       into("rsm/core/")
-      eachFile { fcd -> fcd.path = fcd.name }
+      eachFile { fcd ->
+        fcd.path = fcd.path.replaceFirst("^[^/]+/", "")
+      }
       includeEmptyDirs = false
     }
     from(zipTree(configurations.aivenS3.singleFile)) {
       into("rsm/s3/")
-      eachFile { fcd -> fcd.path = fcd.name }
+      eachFile { fcd ->
+        fcd.path = fcd.path.replaceFirst("^[^/]+/", "")
+      }
       includeEmptyDirs = false
     }
 
