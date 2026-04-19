@@ -941,6 +941,8 @@ project(':core') {
 
   configurations {
     generator
+    aivenCore
+    aivenS3
   }
 
   dependencies {
@@ -987,6 +989,9 @@ project(':core') {
     }
     // ZooKeeperMain depends on commons-cli but declares the dependency as `provided`
     implementation libs.commonsCli
+    // Kafka tiered storage
+    aivenCore 'io.aiven:tiered-storage-for-apache-kafka-core:1.1.1@zip'
+    aivenS3   'io.aiven:tiered-storage-for-apache-kafka-s3:1.1.1@zip'
 
     compileOnly libs.log4j
 
@@ -1210,10 +1215,16 @@ project(':core') {
     from(project(':streams:examples').configurations.runtimeClasspath) { into("libs/") }
     from(project(':tools:tools-api').jar) { into("libs/") }
     from(project(':tools:tools-api').configurations.runtimeClasspath) { into("libs/") }
-    from(project(':storage:aiven-rsm-core').jar){ into("rsm/core/") }
-    from(project(':storage:aiven-rsm-core').configurations.runtimeClasspath) { into("rsm/core/") }
-    from(project(':storage:aiven-rsm-s3').jar) { into("rsm/s3/") }
-    from(project(':storage:aiven-rsm-s3').configurations.runtimeClasspath) { into("rsm/s3/") }
+    from(zipTree(configurations.aivenCore.singleFile)) {
+      into("rsm/core/")
+      eachFile { fcd -> fcd.path = fcd.name }
+      includeEmptyDirs = false
+    }
+    from(zipTree(configurations.aivenS3.singleFile)) {
+      into("rsm/s3/")
+      eachFile { fcd -> fcd.path = fcd.name }
+      includeEmptyDirs = false
+    }
 
     duplicatesStrategy 'exclude'
   }
@@ -3288,38 +3299,6 @@ project(':connect:test-plugins') {
     implementation libs.slf4jApi
     implementation libs.jacksonDatabind
   }
-}
-
-project(':storage:aiven-rsm-core') {
-  archivesBaseName = "kafka-storage-aiven-rsm-core"
-
-  dependencies {
-    implementation('io.aiven:tiered-storage-for-apache-kafka-core:1.1.1') {
-      exclude group: 'org.apache.iceberg'
-      exclude group: 'com.github.ben-manes.caffeine'
-      exclude group: 'org.slf4j'
-    }
-    implementation 'io.aiven:tiered-storage-for-apache-kafka-storage-core:1.1.1'
-    implementation 'io.aiven:tiered-storage-for-apache-kafka-commons:1.1.1'
-  }
-
-  javadoc { enabled = false }
-}
-
-project(':storage:aiven-rsm-s3') {
-  archivesBaseName = "kafka-storage-aiven-rsm-s3"
-
-  dependencies {
-    implementation('io.aiven:tiered-storage-for-apache-kafka-storage-s3:1.1.1') {
-      exclude group: 'org.apache.iceberg'
-      exclude group: 'com.github.ben-manes.caffeine'
-      exclude group: 'org.slf4j'
-      // storage-core is already included in rsm-core
-      exclude group: 'io.aiven', module: 'tiered-storage-for-apache-kafka-storage-core'
-    }
-  }
-
-  javadoc { enabled = false }
 }
 
 task aggregatedJavadoc(type: Javadoc, dependsOn: compileJava) {
