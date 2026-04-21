@@ -2983,6 +2983,7 @@ project(':connect:runtime') {
     implementation 'io.aiven:aiven-kafka-connect-jdbc:6.10.0@jar'
     implementation 'com.amazonaws:amazon-kinesis-kafka-connecter:0.0.8@jar'
     implementation 'com.linkedin.cruisecontrol:cruise-control-metrics-reporter:2.5.137@jar'
+    implementation 'org.apache.camel.kafkaconnector:camel-aws-sqs-sink-kafka-connector:3.21.0:uber@jar'
   }
 
   javadoc {
