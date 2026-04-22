@@ -956,6 +956,12 @@ project(':core') {
     archivesName = "kafka_${versions.baseScala}"
   }
 
+  configurations {
+    generator
+    aivenCore
+    aivenS3
+  }
+
   dependencies {
     // `core` is often used in users' tests, define the following dependencies as `api` for backwards compatibility
     // even though the `core` module doesn't expose any public API
@@ -1002,6 +1008,9 @@ project(':core') {
     }
     // ZooKeeperMain depends on commons-cli but declares the dependency as `provided`
     implementation libs.commonsCli
+    // Kafka tiered storage
+    aivenCore 'io.aiven:tiered-storage-for-apache-kafka-core:1.1.1@zip'
+    aivenS3   'io.aiven:tiered-storage-for-apache-kafka-s3:1.1.1@zip'
 
     compileOnly libs.reload4j
 
@@ -1168,7 +1177,24 @@ project(':core') {
     duplicatesStrategy 'exclude'
   }
 
-  tasks.create(name: "releaseTarGz", dependsOn: configurations.archives.artifacts, type: Tar) {
+  // Download aiven tiered storage zip files, extract and copy into rsm/
+  task extractAivenCore(type: Copy) {
+    from(zipTree(configurations.aivenCore.singleFile)) {
+      eachFile { fcd -> fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1)) }
+      includeEmptyDirs = false
+    }
+    into("$buildDir/rsm/core/")
+  }
+
+  task extractAivenS3(type: Copy) {
+    from(zipTree(configurations.aivenS3.singleFile)) {
+      eachFile { fcd -> fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1)) }
+      includeEmptyDirs = false
+    }
+    into("$buildDir/rsm/s3/")
+  }
+
+  tasks.create(name: "releaseTarGz", dependsOn: [configurations.archives.artifacts, extractAivenCore, extractAivenS3], type: Tar) {
     into "kafka_${versions.baseScala}-${archiveVersion.get()}"
     compression = Compression.GZIP
     from(project.file("$rootDir/bin")) { into "bin/" }
@@ -1211,6 +1237,8 @@ project(':core') {
     from(project(':streams:examples').configurations.runtimeClasspath) { into("libs/") }
     from(project(':tools:tools-api').jar) { into("libs/") }
     from(project(':tools:tools-api').configurations.runtimeClasspath) { into("libs/") }
+    from("$buildDir/rsm/") { into("rsm/") }
+
     duplicatesStrategy 'exclude'
   }
 
