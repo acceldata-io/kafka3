@@ -225,9 +225,8 @@ public class SaslChannelBuilder implements ChannelBuilder, ListenerReconfigurabl
                         metadataRegistry);
             } else {
                 LoginManager loginManager = loginManagers.get(clientSaslMechanism);
-                boolean headlessPrincipal = (Boolean) configs.getOrDefault(
-                        SaslConfigs.SASL_KERBEROS_PRINCIPAL_HEADLESS,
-                        SaslConfigs.DEFAULT_SASL_KERBEROS_PRINCIPAL_HEADLESS);
+                Boolean headlessPrincipalValue = (Boolean) configs.get(SaslConfigs.SASL_KERBEROS_PRINCIPAL_HEADLESS);
+                boolean headlessPrincipal = headlessPrincipalValue != null ? headlessPrincipalValue : SaslConfigs.DEFAULT_SASL_KERBEROS_PRINCIPAL_HEADLESS;
                 // In headless mode the broker principal has no host component; pass an empty
                 // serverHost so Sasl.createSaslClient does not append a hostname to the GSS name.
                 String serverHost = headlessPrincipal ? "" : socket.getInetAddress().getHostName();
