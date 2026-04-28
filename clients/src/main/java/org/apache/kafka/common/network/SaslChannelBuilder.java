@@ -225,10 +225,16 @@ public class SaslChannelBuilder implements ChannelBuilder, ListenerReconfigurabl
                         metadataRegistry);
             } else {
                 LoginManager loginManager = loginManagers.get(clientSaslMechanism);
+                boolean headlessPrincipal = (Boolean) configs.getOrDefault(
+                        SaslConfigs.SASL_KERBEROS_PRINCIPAL_HEADLESS,
+                        SaslConfigs.DEFAULT_SASL_KERBEROS_PRINCIPAL_HEADLESS);
+                // In headless mode the broker principal has no host component; pass an empty
+                // serverHost so Sasl.createSaslClient does not append a hostname to the GSS name.
+                String serverHost = headlessPrincipal ? "" : socket.getInetAddress().getHostName();
                 authenticatorCreator = () -> buildClientAuthenticator(configs,
                         saslCallbackHandlers.get(clientSaslMechanism),
                         id,
-                        socket.getInetAddress().getHostName(),
+                        serverHost,
                         loginManager.serviceName(),
                         transportLayer,
                         subjects.get(clientSaslMechanism));
@@ -375,17 +381,25 @@ public class SaslChannelBuilder implements ChannelBuilder, ListenerReconfigurabl
             }
             final String servicePrincipalName = kerberosName.serviceName();
             final String serviceHostname = kerberosName.hostName();
+            // headless principals have no host component (hostName() returns null)
+            final boolean isHeadless = (serviceHostname == null);
 
             try {
                 GSSManager manager = gssManager();
                 // This Oid is used to represent the Kerberos version 5 GSS-API mechanism. It is defined in
                 // RFC 1964.
                 Oid krb5Mechanism = new Oid("1.2.840.113554.1.2.2");
-                GSSName gssName = manager.createName(servicePrincipalName + "@" + serviceHostname, GSSName.NT_HOSTBASED_SERVICE);
+                GSSName gssName;
+                if (isHeadless) {
+                    // headless principal: user@REALM — use NT_USER_NAME, not NT_HOSTBASED_SERVICE
+                    gssName = manager.createName(servicePrincipalName + "@" + kerberosName.realm(), GSSName.NT_USER_NAME);
+                } else {
+                    gssName = manager.createName(servicePrincipalName + "@" + serviceHostname, GSSName.NT_HOSTBASED_SERVICE);
+                }
                 GSSCredential cred = manager.createCredential(gssName,
                         GSSContext.INDEFINITE_LIFETIME, krb5Mechanism, GSSCredential.ACCEPT_ONLY);
                 subject.getPrivateCredentials().add(cred);
-                log.info("Configured native GSSAPI private credentials for {}@{}", serviceHostname, serviceHostname);
+                log.info("Configured native GSSAPI private credentials for principal {}", isHeadless ? servicePrincipalName : serviceHostname);
             } catch (GSSException ex) {
                 log.warn("Cannot add private credential to subject; clients authentication may fail", ex);
             }
