@@ -57,6 +57,13 @@ public class SaslConfigs {
     public static final String SASL_KERBEROS_SERVICE_NAME_DOC = "The Kerberos principal name that Kafka runs as. "
         + "This can be defined either in Kafka's JAAS config or in Kafka's config.";
 
+    public static final String SASL_KERBEROS_PRINCIPAL_HEADLESS = "sasl.kerberos.principal.headless";
+    public static final String SASL_KERBEROS_PRINCIPAL_HEADLESS_DOC = "Set to true when Kafka brokers are configured "
+        + "with headless Kerberos principals (user@REALM) instead of service principals (service/_HOST@REALM). "
+        + "When enabled, clients use the service name alone as the server principal without appending the "
+        + "broker hostname, and native GSSAPI credential creation uses NT_USER_NAME instead of NT_HOSTBASED_SERVICE.";
+    public static final boolean DEFAULT_SASL_KERBEROS_PRINCIPAL_HEADLESS = false;
+
     public static final String SASL_KERBEROS_KINIT_CMD = "sasl.kerberos.kinit.cmd";
     public static final String SASL_KERBEROS_KINIT_CMD_DOC = "Kerberos kinit command path.";
     public static final String DEFAULT_KERBEROS_KINIT_CMD = "/usr/bin/kinit";
