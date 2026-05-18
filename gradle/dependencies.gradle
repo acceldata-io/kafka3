@@ -96,7 +96,7 @@ versions += [
   // when updating checkstyle, check whether the exclusion of
   // CVE-2023-2976 and CVE-2020-8908 can be dropped from
   // gradle/resources/dependencycheck-suppressions.xml
-  checkstyle: "8.36.2",
+  checkstyle: "12.3.1",
   commonsCli: "1.4",
   commonsIo: "2.16.1", // ZooKeeper dependency. Do not use, this is going away.
   commonsValidator: "1.7",
@@ -118,7 +118,7 @@ versions += [
   jaxrs: "2.1.1",
   jfreechart: "1.0.0",
   jopt: "5.0.4",
-  jose4j: "0.9.4",
+  jose4j: "0.9.6",
   junit: "5.10.2",
   jqwik: "1.7.4",
   kafka_0100: "0.10.0.1",
@@ -146,7 +146,7 @@ versions += [
   lz4: "1.8.0",
   mavenArtifact: "3.8.8",
   metrics: "2.2.0",
-  netty: "4.1.118.Final",
+  netty: "4.1.132.Final",
   opentelemetryProto: "1.0.0-alpha",
   protobuf: "3.25.5", // a dependency of opentelemetryProto
   pcollections: "4.0.1",
@@ -165,7 +165,7 @@ versions += [
   snappy: "1.1.10.5",
   spotbugs: "4.8.0",
   zinc: "1.9.2",
-  zookeeper: "3.8.4.3.3.6.3-SNAPSHOT",
+  zookeeper: "3.8.4.3.3.6.4-1",
   zstd: "1.5.6-4"
 ]
 

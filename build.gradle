@@ -941,6 +941,8 @@ project(':core') {
 
   configurations {
     generator
+    aivenCore
+    aivenS3
   }
 
   dependencies {
@@ -987,6 +989,9 @@ project(':core') {
     }
     // ZooKeeperMain depends on commons-cli but declares the dependency as `provided`
     implementation libs.commonsCli
+    // Kafka tiered storage
+    aivenCore 'io.aiven:tiered-storage-for-apache-kafka-core:1.1.1@zip'
+    aivenS3   'io.aiven:tiered-storage-for-apache-kafka-s3:1.1.1@zip'
 
     compileOnly libs.log4j
 
@@ -1167,7 +1172,24 @@ project(':core') {
     duplicatesStrategy 'exclude'
   }
 
-  tasks.create(name: "releaseTarGz", dependsOn: configurations.archives.artifacts, type: Tar) {
+  // Download aiven tiered storage zip files, extract and copy into rsm/
+  task extractAivenCore(type: Copy) {
+    from(zipTree(configurations.aivenCore.singleFile)) {
+      eachFile { fcd -> fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1)) }
+      includeEmptyDirs = false
+    }
+    into("$buildDir/rsm/core/")
+  }
+
+  task extractAivenS3(type: Copy) {
+    from(zipTree(configurations.aivenS3.singleFile)) {
+      eachFile { fcd -> fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1)) }
+      includeEmptyDirs = false
+    }
+    into("$buildDir/rsm/s3/")
+  }
+
+  tasks.create(name: "releaseTarGz", dependsOn: [configurations.archives.artifacts, extractAivenCore, extractAivenS3], type: Tar) {
     into "kafka_${versions.baseScala}-${archiveVersion.get()}"
     compression = Compression.GZIP
     from(project.file("$rootDir/bin")) { into "bin/" }
@@ -1210,6 +1232,8 @@ project(':core') {
     from(project(':streams:examples').configurations.runtimeClasspath) { into("libs/") }
     from(project(':tools:tools-api').jar) { into("libs/") }
     from(project(':tools:tools-api').configurations.runtimeClasspath) { into("libs/") }
+    from("$buildDir/rsm/") { into("rsm/") }
+
     duplicatesStrategy 'exclude'
   }
 
@@ -2977,12 +3001,13 @@ project(':connect:runtime') {
 
     testRuntimeOnly libs.slf4jlog4j
     testRuntimeOnly libs.bcpkix
-    implementation 'org.mongodb.kafka:mongo-kafka:2.0.0:all@jar'
-    implementation 'com.google.cloud:pubsub-group-kafka-connector:1.3.2@jar'
-    implementation 'io.aiven:aiven-kafka-connect-s3:2.15.0@jar'
-    implementation 'io.aiven:aiven-kafka-connect-jdbc:6.10.0@jar'
-    implementation 'com.amazonaws:amazon-kinesis-kafka-connecter:0.0.8@jar'
+    implementation 'org.mongodb.kafka:mongo-kafka:2.0.0.3.3.6.4-1:all@jar'
+    implementation 'com.google.cloud:pubsub-group-kafka-connector:1.2.0.3.3.6.4-1@jar'
+    implementation 'io.aiven:aiven-kafka-connect-s3:2.15.0.3.3.6.4-1@jar'
+    implementation 'io.aiven:aiven-kafka-connect-jdbc:6.10.0.3.3.6.4-1@jar'
+    implementation 'com.amazonaws:amazon-kinesis-kafka-connecter:0.0.8.3.3.6.4-1@jar'
     implementation 'com.linkedin.cruisecontrol:cruise-control-metrics-reporter:2.5.137@jar'
+    implementation 'org.apache.camel.kafkaconnector:camel-aws-sqs-sink-kafka-connector:3.21.0.3.7.2.3.3.6.4-1:uber@jar'
   }
 
   javadoc {
