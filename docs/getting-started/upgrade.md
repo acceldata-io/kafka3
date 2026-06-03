@@ -58,7 +58,7 @@ If you are upgrading from version 2.4.0 or above, and you have not overridden th
 
 
 
-### Notable changes in 3.9.2
+### Notable changes in 3.9.2.3.4.3.0-1
 
   * There is a new server configuration, `alter.config.policy.kraft.compatibility.enable`, which ensures that an AlterConfigPolicy is invoked consistently between KRaft and ZooKeeper modes. To enable this behavior, set the property to `true` in `server.properties`. For backward compatibility, the default value is `false`. See [KIP-1252](https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=399279475) for more details.
 
