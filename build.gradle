@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets
 
 buildscript {
   repositories {
+    mavenLocal()
     mavenCentral()
   }
   apply from: "$rootDir/gradle/dependencies.gradle"
@@ -52,7 +53,7 @@ plugins {
 
 ext {
   gradleVersion = versions.gradle
-  minJavaVersion = 8
+  minJavaVersion = 17
   buildVersionFileName = "kafka-version.properties"
 
   defaultMaxHeapSize = "2g"
@@ -126,6 +127,7 @@ ext {
 allprojects {
 
   repositories {
+    mavenLocal()
     mavenCentral()
   }
 
