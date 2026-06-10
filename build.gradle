@@ -943,6 +943,8 @@ project(':core') {
     generator
     aivenCore
     aivenS3
+    aivenGCS
+    aivenAzure
   }
 
   dependencies {
@@ -990,8 +992,10 @@ project(':core') {
     // ZooKeeperMain depends on commons-cli but declares the dependency as `provided`
     implementation libs.commonsCli
     // Kafka tiered storage
-    aivenCore 'io.aiven:tiered-storage-for-apache-kafka-core:1.1.1@zip'
-    aivenS3   'io.aiven:tiered-storage-for-apache-kafka-s3:1.1.1@zip'
+    aivenCore libs.aivenCore
+    aivenS3   libs.aivenS3
+    aivenGCS libs.aivenGCS
+    aivenAzure libs.aivenAzure
 
     compileOnly libs.log4j
 
@@ -1189,7 +1193,23 @@ project(':core') {
     into("$buildDir/rsm/s3/")
   }
 
-  tasks.create(name: "releaseTarGz", dependsOn: [configurations.archives.artifacts, extractAivenCore, extractAivenS3], type: Tar) {
+  task extractAivenGCS(type: Copy) {
+    from(zipTree(configurations.aivenGCS.singleFile)) {
+      eachFile { fcd -> fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1)) }
+      includeEmptyDirs = false
+    }
+    into("$buildDir/rsm/gcs/")
+  }
+
+  task extractAivenAzure(type: Copy) {
+    from(zipTree(configurations.aivenAzure.singleFile)) {
+      eachFile { fcd -> fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1)) }
+      includeEmptyDirs = false
+    }
+    into("$buildDir/rsm/azure/")
+  }
+
+  tasks.create(name: "releaseTarGz", dependsOn: [configurations.archives.artifacts, extractAivenCore, extractAivenS3, extractAivenGCS, extractAivenAzure], type: Tar) {
     into "kafka_${versions.baseScala}-${archiveVersion.get()}"
     compression = Compression.GZIP
     from(project.file("$rootDir/bin")) { into "bin/" }
