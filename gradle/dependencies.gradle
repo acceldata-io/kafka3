@@ -166,7 +166,8 @@ versions += [
   // When updating the zstd version, please do as well in docker/native/native-image-configs/resource-config.json
   // Also make sure the compression levels in org.apache.kafka.common.record.CompressionType are still valid
   zstd: "1.5.6-4",
-  junitPlatform: "1.10.2"
+  junitPlatform: "1.10.2",
+  aiven: "1.1.1"
 ]
 
 libs += [
@@ -267,5 +268,9 @@ libs += [
   jfreechart: "jfreechart:jfreechart:$versions.jfreechart",
   mavenArtifact: "org.apache.maven:maven-artifact:$versions.mavenArtifact",
   zstd: "com.github.luben:zstd-jni:$versions.zstd",
-  httpclient: "org.apache.httpcomponents:httpclient:$versions.httpclient"
+  httpclient: "org.apache.httpcomponents:httpclient:$versions.httpclient",
+  aivenCore: "io.aiven:tiered-storage-for-apache-kafka-core:$versions.aiven@zip",
+  aivenS3: "io.aiven:tiered-storage-for-apache-kafka-s3:$versions.aiven@zip",
+  aivenGCS: "io.aiven:tiered-storage-for-apache-kafka-gcs:$versions.aiven@zip",
+  aivenAzure: "io.aiven:tiered-storage-for-apache-kafka-azure:$versions.aiven@zip"
 ]
