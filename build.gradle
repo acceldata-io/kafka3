@@ -167,9 +167,10 @@ ext {
 allprojects {
 
   repositories {
-    //mavenCentral()
+    mavenCentral()
     maven {
-      url "http://repo1.acceldata.dev/repository/odp-staging-central/"
+      url "http://repo1.acceldata.dev/repository/odp-central/"
+      allowInsecureProtocol = true
     }
   }
 
