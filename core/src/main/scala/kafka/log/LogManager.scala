@@ -593,7 +593,7 @@ class LogManager(logDirs: Seq[File],
           val messageFormatVersion = new MessageFormatVersion(versionString, interBrokerProtocolVersion.version)
           if (messageFormatVersion.shouldIgnore) {
             val copy = new Properties()
-            copy.putAll(overrides)
+            copy ++= overrides
             copy.remove(TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG)
             overrides = copy
 
