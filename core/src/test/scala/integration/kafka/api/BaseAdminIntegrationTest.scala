@@ -19,6 +19,7 @@ package kafka.api
 import java.util
 import java.util.Properties
 import java.util.concurrent.ExecutionException
+import kafka.utils.Implicits._
 import kafka.utils.Logging
 import kafka.utils.TestUtils._
 import org.apache.kafka.clients.admin.{Admin, AdminClientConfig, CreateTopicsOptions, CreateTopicsResult, DescribeClusterOptions, DescribeTopicsOptions, NewTopic, TopicDescription}
@@ -235,7 +236,7 @@ abstract class BaseAdminIntegrationTest extends IntegrationTestHarness with Logg
 
   def createAdminClient: Admin = {
     val props = new Properties()
-    props.putAll(createConfig)
+    props ++= createConfig
     val client = createAdminClient(configOverrides = props)
     client
   }

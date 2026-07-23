@@ -17,6 +17,7 @@
 
 package kafka.api
 
+import kafka.utils.Implicits._
 import kafka.utils.TestUtils
 import kafka.utils.TestUtils.{consumeRecords, waitUntilTrue}
 import org.apache.kafka.clients.consumer.{Consumer, ConsumerConfig, ConsumerGroupMetadata, ConsumerRecord, OffsetAndMetadata}
@@ -75,7 +76,7 @@ class TransactionsTest extends IntegrationTestHarness {
   }
 
   override protected def modifyConfigs(props: Seq[Properties]): Unit = {
-    props.foreach(p => p.putAll(overridingProps()))
+    props.foreach(p => p ++= overridingProps())
   }
 
   override protected def kraftControllerConfigs(testInfo: TestInfo): Seq[Properties] = {

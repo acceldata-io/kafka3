@@ -18,6 +18,7 @@
 package integration.kafka.admin
 
 import kafka.api.IntegrationTestHarness
+import kafka.utils.Implicits._
 import org.apache.kafka.clients.admin._
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
 import org.apache.kafka.common.errors.{InvalidProducerEpochException, ProducerFencedException}
@@ -68,7 +69,7 @@ class AdminFenceProducersIntegrationTest extends IntegrationTestHarness {
   }
 
   override protected def modifyConfigs(props: Seq[Properties]): Unit = {
-    props.foreach(p => p.putAll(overridingProps()))
+    props.foreach(p => p ++= overridingProps())
   }
 
   override protected def kraftControllerConfigs(testInfo: TestInfo): Seq[Properties] = {

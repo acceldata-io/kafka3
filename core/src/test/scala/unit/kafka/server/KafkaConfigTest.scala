@@ -22,6 +22,7 @@ import java.util
 import java.util.{Arrays, Collections, Properties}
 import kafka.cluster.EndPoint
 import kafka.security.authorizer.AclAuthorizer
+import kafka.utils.Implicits._
 import kafka.utils.TestUtils.assertBadConfigContainingMessage
 import kafka.utils.{CoreUtils, TestUtils}
 import org.apache.kafka.common.Node
@@ -1789,7 +1790,7 @@ class KafkaConfigTest {
   @Test
   def testBrokerIdIsInferredByNodeIdWithKraft(): Unit = {
     val props = new Properties()
-    props.putAll(kraftProps())
+    props ++= kraftProps()
     val config = KafkaConfig.fromProps(props)
     assertEquals(3, config.brokerId)
     assertEquals(3, config.nodeId)
@@ -1839,7 +1840,7 @@ class KafkaConfigTest {
   @Test
   def testEarlyStartListeners(): Unit = {
     val props = new Properties()
-    props.putAll(kraftProps())
+    props ++= kraftProps()
     props.setProperty(ServerConfigs.EARLY_START_LISTENERS_CONFIG, "INTERNAL,INTERNAL2")
     props.setProperty(ReplicationConfigs.INTER_BROKER_LISTENER_NAME_CONFIG, "INTERNAL")
     props.setProperty(SocketServerConfigs.LISTENER_SECURITY_PROTOCOL_MAP_CONFIG,
@@ -1854,7 +1855,7 @@ class KafkaConfigTest {
   @Test
   def testEarlyStartListenersMustBeListeners(): Unit = {
     val props = new Properties()
-    props.putAll(kraftProps())
+    props ++= kraftProps()
     props.setProperty(ServerConfigs.EARLY_START_LISTENERS_CONFIG, "INTERNAL")
     assertEquals("early.start.listeners contains listener INTERNAL, but this is not " +
       "contained in listeners or controller.listener.names",
@@ -1865,7 +1866,7 @@ class KafkaConfigTest {
   def testIgnoreUserInterBrokerProtocolVersionKRaft(): Unit = {
     for (ibp <- Seq("3.0", "3.1", "3.2")) {
       val props = new Properties()
-      props.putAll(kraftProps())
+      props ++= kraftProps()
       props.setProperty(ReplicationConfigs.INTER_BROKER_PROTOCOL_VERSION_CONFIG, ibp)
       val config = new KafkaConfig(props)
       assertEquals(config.interBrokerProtocolVersion, MetadataVersion.MINIMUM_KRAFT_VERSION)
@@ -1875,7 +1876,7 @@ class KafkaConfigTest {
   @Test
   def testInvalidInterBrokerProtocolVersionKRaft(): Unit = {
     val props = new Properties()
-    props.putAll(kraftProps())
+    props ++= kraftProps()
     props.setProperty(ReplicationConfigs.INTER_BROKER_PROTOCOL_VERSION_CONFIG, "2.8")
     assertEquals("A non-KRaft version 2.8 given for inter.broker.protocol.version. The minimum version is 3.0-IV1",
       assertThrows(classOf[ConfigException], () => new KafkaConfig(props)).getMessage)
@@ -1884,7 +1885,7 @@ class KafkaConfigTest {
   @Test
   def testDefaultInterBrokerProtocolVersionKRaft(): Unit = {
     val props = new Properties()
-    props.putAll(kraftProps())
+    props ++= kraftProps()
     val config = KafkaConfig.fromProps(props)
     assertEquals(config.interBrokerProtocolVersion, MetadataVersion.MINIMUM_KRAFT_VERSION)
   }
@@ -1893,7 +1894,7 @@ class KafkaConfigTest {
   def testMetadataMaxSnapshotInterval(): Unit = {
     val validValue = 100
     val props = new Properties()
-    props.putAll(kraftProps())
+    props ++= kraftProps()
     props.setProperty(KRaftConfigs.METADATA_SNAPSHOT_MAX_INTERVAL_MS_CONFIG, validValue.toString)
 
     val config = KafkaConfig.fromProps(props)
@@ -1976,7 +1977,7 @@ class KafkaConfigTest {
   @Test
   def testMigrationEnabledKRaftMode(): Unit = {
     val props = new Properties()
-    props.putAll(kraftProps())
+    props ++= kraftProps()
     props.setProperty(KRaftConfigs.MIGRATION_ENABLED_CONFIG, "true")
 
     assertEquals(
@@ -1990,7 +1991,7 @@ class KafkaConfigTest {
   @Test
   def testConsumerGroupSessionTimeoutValidation(): Unit = {
     val props = new Properties()
-    props.putAll(kraftProps())
+    props ++= kraftProps()
 
     // Max should be greater than or equals to min.
     props.put(GroupCoordinatorConfig.CONSUMER_GROUP_MIN_SESSION_TIMEOUT_MS_CONFIG, "20")
@@ -2009,7 +2010,7 @@ class KafkaConfigTest {
   @Test
   def testConsumerGroupHeartbeatIntervalValidation(): Unit = {
     val props = new Properties()
-    props.putAll(kraftProps())
+    props ++= kraftProps()
 
     // Max should be greater than or equals to min.
     props.put(GroupCoordinatorConfig.CONSUMER_GROUP_MIN_HEARTBEAT_INTERVAL_MS_CONFIG, "20")
@@ -2034,7 +2035,7 @@ class KafkaConfigTest {
     assertThrows(classOf[ConfigException], () => KafkaConfig.fromProps(props))
 
     // Setting KRaft's properties.
-    props.putAll(kraftProps())
+    props ++= kraftProps()
 
     // Only classic and consumer are supported.
     props.put(GroupCoordinatorConfig.GROUP_COORDINATOR_REBALANCE_PROTOCOLS_CONFIG, "foo")
@@ -2054,7 +2055,7 @@ class KafkaConfigTest {
   @Test
   def testConsumerGroupMigrationPolicy(): Unit = {
     val props = new Properties()
-    props.putAll(kraftProps())
+    props ++= kraftProps()
 
     // Invalid GroupProtocolMigrationPolicy name.
     props.put(GroupCoordinatorConfig.CONSUMER_GROUP_MIGRATION_POLICY_CONFIG, "foo")
@@ -2088,7 +2089,7 @@ class KafkaConfigTest {
   @Test
   def testShareGroupSessionTimeoutValidation(): Unit = {
     val props = new Properties()
-    props.putAll(kraftProps())
+    props ++= kraftProps()
 
     // Max should be greater than or equals to min.
     props.put(GroupCoordinatorConfig.SHARE_GROUP_MIN_SESSION_TIMEOUT_MS_CONFIG, "20")
@@ -2107,7 +2108,7 @@ class KafkaConfigTest {
   @Test
   def testShareGroupHeartbeatIntervalValidation(): Unit = {
     val props = new Properties()
-    props.putAll(kraftProps())
+    props ++= kraftProps()
 
     // Max should be greater than or equals to min.
     props.put(GroupCoordinatorConfig.SHARE_GROUP_MIN_HEARTBEAT_INTERVAL_MS_CONFIG, "20")
@@ -2126,7 +2127,7 @@ class KafkaConfigTest {
   @Test
   def testShareGroupRecordLockDurationValidation(): Unit = {
     val props = new Properties()
-    props.putAll(kraftProps())
+    props ++= kraftProps()
 
     props.put(ShareGroupConfig.SHARE_GROUP_MIN_RECORD_LOCK_DURATION_MS_CONFIG, "10")
     assertThrows(classOf[ConfigException], () => KafkaConfig.fromProps(props))

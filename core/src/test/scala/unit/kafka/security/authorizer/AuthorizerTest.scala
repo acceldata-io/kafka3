@@ -336,7 +336,7 @@ class AuthorizerTest extends QuorumTestHarness with BaseAuthorizerTest {
     val props = properties
     props.put(AclAuthorizer.AllowEveryoneIfNoAclIsFoundProp, " true")
     // replace all property values with leading & trailing whitespaces
-    props.replaceAll((_,v) => " " + v + " ")
+    props.replaceAll((_: AnyRef, v: AnyRef) => " " + v + " ")
     val cfg = KafkaConfig.fromProps(props)
     val testAuthorizer = createAuthorizer()
     try {

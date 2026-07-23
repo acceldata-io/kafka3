@@ -45,6 +45,9 @@ object Implicits {
     def ++=(map: collection.Map[String, AnyRef]): Unit =
       (properties: util.Hashtable[AnyRef, AnyRef]).putAll(map.asJava)
 
+    def ++=(map: util.Map[_ <: AnyRef, _ <: AnyRef]): Unit =
+      (properties: util.Hashtable[AnyRef, AnyRef]).putAll(map)
+
   }
 
   /**

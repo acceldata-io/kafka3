@@ -20,6 +20,7 @@ package kafka.server.metadata
 import java.util
 import java.util.Properties
 
+import kafka.utils.Implicits._
 import org.apache.kafka.common.config.ConfigResource
 import org.apache.kafka.common.config.ConfigResource.Type.TOPIC
 
@@ -47,7 +48,7 @@ class MockConfigRepository extends ConfigRepository {
   def setConfig(configResource: ConfigResource, key: String, value: String): Unit = configs.synchronized {
     val properties = configs.getOrDefault(configResource, new Properties())
     val newProperties = new Properties()
-    newProperties.putAll(properties)
+    newProperties ++= properties
     if (value == null) {
       newProperties.remove(key)
     } else {
