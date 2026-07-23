@@ -157,7 +157,8 @@ allprojects {
           libs.nettyTransportNativeEpoll,
 	  // be explicit about the reload4j version instead of relying on the transitive versions
 	  libs.log4j,
-          "org.codehaus.plexus:plexus-utils:3.6.1"
+          "org.codehaus.plexus:plexus-utils:3.6.1",
+          "org.apache.commons:commons-lang3:3.18.0"
         )
       }
     }
