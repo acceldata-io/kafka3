@@ -23,6 +23,7 @@ import java.util
 import java.util.{Collections, Optional, OptionalInt, Properties}
 import java.util.concurrent.{CompletableFuture, TimeUnit}
 import javax.security.auth.login.Configuration
+import kafka.utils.Implicits._
 import kafka.utils.{CoreUtils, Logging, TestInfoUtils, TestUtils}
 import kafka.zk.{AdminZkClient, EmbeddedZookeeper, KafkaZkClient}
 import org.apache.kafka.clients.consumer.GroupProtocol
@@ -320,7 +321,7 @@ abstract class QuorumTestHarness extends Logging {
       throw new RuntimeException("Only one KRaft controller is supported for now.")
     }
     val props = propsList.head
-    props.putAll(overridingProps)
+    props ++= overridingProps
     props.setProperty(KRaftConfigs.SERVER_MAX_STARTUP_TIME_MS_CONFIG, TimeUnit.MINUTES.toMillis(10).toString)
     props.setProperty(KRaftConfigs.PROCESS_ROLES_CONFIG, "controller")
     props.setProperty(ServerConfigs.UNSTABLE_FEATURE_VERSIONS_ENABLE_CONFIG, "true")

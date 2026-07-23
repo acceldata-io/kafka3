@@ -18,6 +18,7 @@ package kafka.admin
 
 import kafka.api.IntegrationTestHarness
 import kafka.server.KafkaConfig
+import kafka.utils.Implicits._
 import kafka.utils.TestUtils
 import org.apache.kafka.clients.admin.{AlterConfigOp, ConfigEntry}
 import org.apache.kafka.common.{TopicIdPartition, TopicPartition, Uuid}
@@ -53,7 +54,7 @@ class RemoteTopicCrudTest extends IntegrationTestHarness {
   override protected def brokerCount: Int = 2
 
   override protected def modifyConfigs(props: Seq[Properties]): Unit = {
-    props.foreach(p => p.putAll(overrideProps()))
+    props.foreach(p => p ++= overrideProps())
   }
 
   override protected def kraftControllerConfigs(testInfo: TestInfo): Seq[Properties] = {

@@ -393,7 +393,7 @@ object TestUtils extends Logging {
     adminConfig: Properties = new Properties
   ): Admin = {
     val adminClientProperties = new Properties()
-    adminClientProperties.putAll(adminConfig)
+    adminClientProperties ++= adminConfig
     if (!adminClientProperties.containsKey(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG)) {
       adminClientProperties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers(brokers, listenerName))
     }

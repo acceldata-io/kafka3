@@ -23,6 +23,7 @@ import java.nio.file.Files
 import java.util
 import java.util.Properties
 import kafka.server.KafkaConfig
+import kafka.utils.Implicits._
 import kafka.utils.TestUtils
 import net.sourceforge.argparse4j.inf.ArgumentParserException
 import org.apache.kafka.common.metadata.UserScramCredentialRecord
@@ -211,7 +212,7 @@ Found problem:
   def testFormatSucceedsIfAllDirectoriesAreAvailable(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir(), TestUtils.tempDir(), TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultStaticQuorumProperties)
+    properties ++= defaultStaticQuorumProperties
     properties.setProperty("log.dirs", availableDirs.mkString(","))
     val stream = new ByteArrayOutputStream()
     assertEquals(0, runFormatCommand(stream, properties))
@@ -231,7 +232,7 @@ Found problem:
     val availableDir1 = TestUtils.tempDir()
     val unavailableDir1 = TestUtils.tempFile()
     val properties = new Properties()
-    properties.putAll(defaultStaticQuorumProperties)
+    properties ++= defaultStaticQuorumProperties
     properties.setProperty("log.dirs", s"${availableDir1},${unavailableDir1}")
     val stream = new ByteArrayOutputStream()
     assertEquals(0, runFormatCommand(stream, properties))
@@ -250,7 +251,7 @@ Found problem:
   def testFormatFailsOnAlreadyFormatted(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir(), TestUtils.tempDir(), TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultStaticQuorumProperties)
+    properties ++= defaultStaticQuorumProperties
     properties.setProperty("log.dirs", s"${availableDirs(0)}")
     val stream = new ByteArrayOutputStream()
     assertEquals(0, runFormatCommand(stream, properties))
@@ -265,7 +266,7 @@ Found problem:
   def testIgnoreFormatted(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir(), TestUtils.tempDir(), TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultStaticQuorumProperties)
+    properties ++= defaultStaticQuorumProperties
     properties.setProperty("log.dirs", s"${availableDirs(0)}")
     val stream = new ByteArrayOutputStream()
     assertEquals(0, runFormatCommand(stream, properties))
@@ -279,7 +280,7 @@ Found problem:
     val unavailableDir1 = TestUtils.tempFile()
     val unavailableDir2 = TestUtils.tempFile()
     val properties = new Properties()
-    properties.putAll(defaultStaticQuorumProperties)
+    properties ++= defaultStaticQuorumProperties
     properties.setProperty("log.dirs", s"${unavailableDir1},${unavailableDir2}")
     val stream = new ByteArrayOutputStream()
     assertEquals("No available log directories to format.", assertThrows(classOf[FormatterException],
@@ -309,7 +310,7 @@ Found problem:
   def testFormatWithReleaseVersion(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultStaticQuorumProperties)
+    properties ++= defaultStaticQuorumProperties
     properties.setProperty("log.dirs", availableDirs.mkString(","))
     val stream = new ByteArrayOutputStream()
     assertEquals(0, runFormatCommand(stream, properties, Seq("--release-version", "3.8-IV0")))
@@ -321,7 +322,7 @@ Found problem:
   def testFormatWithReleaseVersionAsFeature(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultStaticQuorumProperties)
+    properties ++= defaultStaticQuorumProperties
     properties.setProperty("log.dirs", availableDirs.mkString(","))
     val stream = new ByteArrayOutputStream()
     assertEquals(0, runFormatCommand(stream, properties, Seq("--feature", "metadata.version=20")))
@@ -333,7 +334,7 @@ Found problem:
   def testFormatWithInvalidFeature(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultStaticQuorumProperties)
+    properties ++= defaultStaticQuorumProperties
     properties.setProperty("log.dirs", availableDirs.mkString(","))
     assertEquals("Unsupported feature: non.existent.feature. Supported features are: " +
       "kraft.version, transaction.version",
@@ -346,7 +347,7 @@ Found problem:
   def testFormatWithInvalidKRaftVersionLevel(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultDynamicQuorumProperties)
+    properties ++= defaultDynamicQuorumProperties
     properties.setProperty("log.dirs", availableDirs.mkString(","))
     assertEquals("No feature:kraft.version with feature level 999",
       assertThrows(classOf[IllegalArgumentException], () =>
@@ -358,7 +359,7 @@ Found problem:
   def testFormatWithReleaseVersionAndKRaftVersion(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultStaticQuorumProperties)
+    properties ++= defaultStaticQuorumProperties
     properties.setProperty("log.dirs", availableDirs.mkString(","))
     val stream = new ByteArrayOutputStream()
     assertEquals(0, runFormatCommand(stream, properties, Seq(
@@ -372,7 +373,7 @@ Found problem:
   def testFormatWithReleaseVersionDefault(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultStaticQuorumProperties)
+    properties ++= defaultStaticQuorumProperties
     properties.setProperty("log.dirs", availableDirs.mkString(","))
     properties.setProperty("inter.broker.protocol.version", "3.7")
     val stream = new ByteArrayOutputStream()
@@ -385,7 +386,7 @@ Found problem:
   def testFormatWithReleaseVersionDefaultAndReleaseVersion(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultStaticQuorumProperties)
+    properties ++= defaultStaticQuorumProperties
     properties.setProperty("log.dirs", availableDirs.mkString(","))
     properties.setProperty("inter.broker.protocol.version", "3.7")
     val stream = new ByteArrayOutputStream()
@@ -417,7 +418,7 @@ Found problem:
   def testFormatWithStandaloneFlag(setKraftVersionFeature: Boolean): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultDynamicQuorumProperties)
+    properties ++= defaultDynamicQuorumProperties
     properties.setProperty("log.dirs", availableDirs.mkString(","))
     val stream = new ByteArrayOutputStream()
     val arguments = ListBuffer[String]("--release-version", "3.9-IV0", "--standalone")
@@ -447,7 +448,7 @@ Found problem:
   def testFormatWithInitialControllersFlag(setKraftVersionFeature: Boolean): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultDynamicQuorumProperties)
+    properties ++= defaultDynamicQuorumProperties
     properties.setProperty("log.dirs", availableDirs.mkString(","))
     val stream = new ByteArrayOutputStream()
     val arguments = ListBuffer[String](
@@ -471,7 +472,7 @@ Found problem:
   def testFormatWithoutStaticQuorumFailsWithoutInitialControllersOnController(processRoles: String): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultDynamicQuorumProperties)
+    properties ++= defaultDynamicQuorumProperties
     if (processRoles.contains("broker")) {
       properties.setProperty("listeners", "PLAINTEXT://:9092,CONTROLLER://:9093")
       properties.setProperty("advertised.listeners", "PLAINTEXT://127.0.0.1:9092,CONTROLLER://127.0.0.1:9093")
@@ -490,7 +491,7 @@ Found problem:
   def testFormatWithNoInitialControllersSucceedsOnController(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultDynamicQuorumProperties)
+    properties ++= defaultDynamicQuorumProperties
     properties.setProperty("log.dirs", availableDirs.mkString(","))
     val stream = new ByteArrayOutputStream()
     val arguments = ListBuffer[String]("--release-version", "3.9-IV0", "--no-initial-controllers")
@@ -527,7 +528,7 @@ Found problem:
   def testFormatWithoutStaticQuorumSucceedsWithoutInitialControllersOnBroker(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultDynamicQuorumProperties)
+    properties ++= defaultDynamicQuorumProperties
     properties.setProperty("listeners", "PLAINTEXT://:9092")
     properties.setProperty("advertised.listeners", "PLAINTEXT://127.0.0.1:9092")
     properties.setProperty("process.roles", "broker")
@@ -543,7 +544,7 @@ Found problem:
   def testBootstrapScramRecords(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultStaticQuorumProperties)
+    properties ++= defaultStaticQuorumProperties
     properties.setProperty("log.dirs", availableDirs.mkString(","))
     val stream = new ByteArrayOutputStream()
     val arguments = ListBuffer[String](
@@ -570,7 +571,7 @@ Found problem:
   def testScramRecordsOldReleaseVersion(): Unit = {
     val availableDirs = Seq(TestUtils.tempDir())
     val properties = new Properties()
-    properties.putAll(defaultStaticQuorumProperties)
+    properties ++= defaultStaticQuorumProperties
     properties.setProperty("log.dirs", availableDirs.mkString(","))
     val stream = new ByteArrayOutputStream()
     val arguments = ListBuffer[String](

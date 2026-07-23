@@ -18,6 +18,7 @@ package kafka.api
 
 import java.util.Properties
 import kafka.utils._
+import kafka.utils.Implicits._
 import kafka.zk.ConfigEntityChangeNotificationZNode
 import org.apache.kafka.clients.admin.{Admin, AdminClientConfig, CreateDelegationTokenOptions, ScramCredentialInfo, UserScramCredentialAlteration, UserScramCredentialUpsertion, ScramMechanism => PublicScramMechanism}
 import org.apache.kafka.common.config.SaslConfigs
@@ -92,7 +93,7 @@ class DelegationTokenEndToEndAuthorizationTest extends EndToEndAuthorizationTest
     val token = tokens._1
     val privilegedToken = tokens._2
 
-    privilegedAdminClientConfig.putAll(adminClientConfig)
+    privilegedAdminClientConfig ++= adminClientConfig
 
     // pass token to client jaas config
     val clientLoginContext = JaasTestUtils.tokenClientLoginModule(token.tokenInfo().tokenId(), token.hmacAsBase64String())

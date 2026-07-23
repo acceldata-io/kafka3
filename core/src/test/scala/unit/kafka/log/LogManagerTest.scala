@@ -22,6 +22,7 @@ import kafka.server.checkpoints.OffsetCheckpointFile
 import kafka.server.metadata.{ConfigRepository, MockConfigRepository}
 import kafka.server.BrokerTopicStats
 import kafka.utils._
+import kafka.utils.Implicits._
 import org.apache.directory.api.util.FileUtils
 import org.apache.kafka.common.config.TopicConfig
 import org.apache.kafka.common.errors.OffsetOutOfRangeException
@@ -1150,7 +1151,7 @@ class LogManagerTest {
     logManager.shutdown()
 
     val props = new Properties()
-    props.putAll(logProps)
+    props ++= logProps
     props.put(TopicConfig.REMOTE_LOG_STORAGE_ENABLE_CONFIG, "true")
     val logConfig = new LogConfig(props)
     logManager = TestUtils.createLogManager(

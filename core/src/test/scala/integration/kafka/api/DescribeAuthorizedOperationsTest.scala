@@ -15,6 +15,7 @@ package kafka.api
 import java.util
 import java.util.Properties
 import kafka.security.authorizer.AclAuthorizer
+import kafka.utils.Implicits._
 import kafka.utils.{CoreUtils, JaasTestUtils, TestUtils}
 import org.apache.kafka.clients.admin._
 import org.apache.kafka.common.acl.AclOperation.{ALL, ALTER, CLUSTER_ACTION, DELETE, DESCRIBE}
@@ -126,7 +127,7 @@ class DescribeAuthorizedOperationsTest extends IntegrationTestHarness with SaslS
     adminClientConfig.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, "20000")
     val securityProps: util.Map[Object, Object] =
       TestUtils.adminClientSecurityConfigs(securityProtocol, trustStoreFile, clientSaslProperties)
-    adminClientConfig.putAll(securityProps)
+    adminClientConfig ++= securityProps
     adminClientConfig
   }
 
