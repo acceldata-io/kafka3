@@ -17,7 +17,7 @@
 package kafka.coordinator.transaction
 
 import java.lang.management.ManagementFactory
-import java.nio.ByteBuffer
+import java.nio.{Buffer, ByteBuffer}
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.locks.ReentrantLock
 import javax.management.ObjectName
@@ -965,7 +965,7 @@ class TransactionStateManagerTest {
     // The second batch is an empty batch.
     val records2 = createEmptyBatch(1L, 1L)
 
-    val combinedBuffer = ByteBuffer.allocate(records1.buffer.limit + records2.buffer.limit)
+    val combinedBuffer = ByteBuffer.allocate((records1.buffer: Buffer).limit + (records2.buffer: Buffer).limit)
     combinedBuffer.put(records1.buffer)
     combinedBuffer.put(records2.buffer)
     combinedBuffer.flip
