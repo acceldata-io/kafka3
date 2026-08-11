@@ -13,33 +13,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+SIGNAL=${SIGNAL:-TERM}
 
-if [ $# -lt 1 ];
-then
-        echo "USAGE: $0 [-daemon] connect-mirror-maker2.properties"
-        exit 1
+OSNAME=$(uname -s)
+if [[ "$OSNAME" == "OS/390" ]]; then
+    if [ -z $JOBNAME ]; then
+        JOBNAME="KAFKMRRSTRT"
+    fi
+    PIDS=$(ps -A -o pid,jobname,comm | grep -i $JOBNAME | grep java | grep -v grep | awk '{print $1}')
+elif [[ "$OSNAME" == "OS400" ]]; then
+    PIDS=$(ps -Af | grep -i 'org.apache.kafka.connect.mirror.MirrorMaker' | grep java | grep -v grep | awk '{print $2}')
+else
+    PIDS=$(ps ax | grep ' org.apache.kafka.connect.mirror.MirrorMaker ' | grep java | grep -v grep | awk '{print $1}')
 fi
 
-base_dir=$(dirname $0)
-
-if [ -z "$KAFKA_LOG4J_OPTS" ]; then
-    export KAFKA_LOG4J_OPTS="-Dlog4j2.configurationFile=$base_dir/../config/connect-log4j2.yaml"
+if [ -z "$PIDS" ]; then
+  echo "No kafka Mirror Maker service to stop"
+  rm -rf /var/run/kafka/kafka_mirrormaker.pid
+else
+  kill -s $SIGNAL $PIDS
 fi
-
-if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
-  export KAFKA_HEAP_OPTS="-Xms256M -Xmx2G"
-fi
-
-EXTRA_ARGS=${EXTRA_ARGS-'-name mirrorMaker'}
-
-COMMAND=$1
-case $COMMAND in
-  -daemon)
-    EXTRA_ARGS="-daemon "$EXTRA_ARGS
-    shift
-    ;;
-  *)
-    ;;
-esac
-
-exec $(dirname $0)/kafka-run-class.sh $EXTRA_ARGS org.apache.kafka.connect.mirror.MirrorMaker "$@"
