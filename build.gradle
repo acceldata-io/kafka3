@@ -167,7 +167,7 @@ ext {
 allprojects {
 
   repositories {
-    mavenCentral()
+    maven {url "https://repo1.acceldata.dev/repository/odp-staging-central/"}
   }
 
   dependencyUpdates {
