@@ -113,6 +113,8 @@ ext {
 
   commitId = determineCommitId()
 
+  includeConnectors = project.hasProperty('includeConnectors') && includeConnectors.toBoolean()
+
   configureJavaCompiler = { name, options, projectPath ->
     // -parameters generates arguments with parameter names in TestInfo#getDisplayName.
     // ref: https://github.com/junit-team/junit5/blob/4c0dddad1b96d4a20e92a2cd583954643ac56ac0/junit-jupiter-params/src/main/java/org/junit/jupiter/params/ParameterizedTest.java#L161-L164
@@ -3679,6 +3681,16 @@ project(':connect:runtime') {
 
     testRuntimeOnly libs.bcpkix
     testRuntimeOnly runtimeTestLibs
+
+    if (includeConnectors) {
+      implementation 'org.mongodb.kafka:mongo-kafka:3.0.0.3.3.6.5-SNAPSHOT:all@jar'
+      implementation 'com.google.cloud:pubsub-group-kafka-connector:1.3.3.3.3.6.5-SNAPSHOT@jar'
+      implementation 'io.aiven:aiven-kafka-connect-s3:2.15.0.4.3.0.3.3.6.5-SNAPSHOT@jar'
+      implementation 'io.aiven:aiven-kafka-connect-jdbc:6.12.0.4.3.0.3.3.6.5-SNAPSHOT@jar'
+      implementation 'com.amazonaws:amazon-kinesis-kafka-connecter:0.0.8.4.3.0.3.3.6.5-SNAPSHOT@jar'
+      implementation 'org.apache.camel.kafkaconnector:camel-aws-sqs-sink-kafka-connector:4.18.0.4.3.0.3.3.6.5-SNAPSHOT:uber@jar'
+    }
+    implementation 'com.linkedin.cruisecontrol:cruise-control-metrics-reporter:2.5.146@jar'
   }
 
   javadoc {
@@ -4202,3 +4214,4 @@ def verifyLatestStableMetadataVersionTask = tasks.register('verifyLatestStableMe
 }
 
 check.dependsOn verifyLatestStableMetadataVersionTask
+
