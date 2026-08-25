@@ -3318,7 +3318,7 @@ project(':connect:runtime') {
       implementation 'com.amazonaws:amazon-kinesis-kafka-connecter:0.0.8.3.4.3.0-1@jar'
       implementation 'org.apache.camel.kafkaconnector:camel-aws-sqs-sink-kafka-connector:3.21.0.3.9.2.3.4.3.0-1:uber@jar'
     }
-    implementation 'com.linkedin.cruisecontrol:cruise-control-metrics-reporter:2.5.137@jar'
+    implementation 'com.linkedin.cruisecontrol:cruise-control-metrics-reporter:2.5.143@jar'
   }
 
   javadoc {
