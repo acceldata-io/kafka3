@@ -177,16 +177,6 @@ object DynamicBrokerConfig {
     DynamicConfig.Broker.validate(baseProps)
   }
 
-  private[server] def addDynamicConfigs(configDef: ConfigDef): Unit = {
-    KafkaConfig.configKeys.forKeyValue { (configName, config) =>
-      if (AllDynamicConfigs.contains(configName)) {
-        configDef.define(config.name, config.`type`, config.defaultValue, config.validator,
-          config.importance, config.documentation, config.group, config.orderInGroup, config.width,
-          config.displayName, config.dependents, config.recommender)
-      }
-    }
-  }
-
   private[server] def dynamicConfigUpdateModes: util.Map[String, String] = {
     AllDynamicConfigs.map { name =>
       val mode = if (PerBrokerConfigs.contains(name)) "per-broker" else "cluster-wide"
@@ -314,7 +304,7 @@ class DynamicBrokerConfig(private val kafkaConfig: KafkaConfig) extends Logging 
   }
 
   private def verifyReconfigurableConfigs(configNames: Set[String]): Unit = CoreUtils.inWriteLock(lock) {
-    val nonDynamic = configNames.filter(DynamicConfig.Broker.nonDynamicProps.contains)
+    val nonDynamic = configNames.intersect(DynamicConfig.Broker.nonDynamicProps)
     require(nonDynamic.isEmpty, s"Reconfigurable contains non-dynamic configs $nonDynamic")
   }
 

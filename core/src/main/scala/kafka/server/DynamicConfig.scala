@@ -53,14 +53,25 @@ object DynamicConfig {
     val ReplicaAlterLogDirsIoMaxBytesPerSecondDoc = "A long representing the upper bound (bytes/sec) on disk IO used for moving replica between log directories on the same broker. " +
       s"This property can be only set dynamically. It is suggested that the limit be kept above 1MB/s for accurate behaviour."
 
-    // Definitions
-    val brokerConfigDef = new ConfigDef()
-      // Round minimum value down, to make it easier for users.
-      .define(LeaderReplicationThrottledRateProp, LONG, DefaultReplicationThrottledRate, atLeast(0), MEDIUM, LeaderReplicationThrottledRateDoc)
-      .define(FollowerReplicationThrottledRateProp, LONG, DefaultReplicationThrottledRate, atLeast(0), MEDIUM, FollowerReplicationThrottledRateDoc)
-      .define(ReplicaAlterLogDirsIoMaxBytesPerSecondProp, LONG, DefaultReplicationThrottledRate, atLeast(0), MEDIUM, ReplicaAlterLogDirsIoMaxBytesPerSecondDoc)
-    DynamicBrokerConfig.addDynamicConfigs(brokerConfigDef)
-    val nonDynamicProps = KafkaConfig.configNames.toSet -- brokerConfigDef.names.asScala
+    // Definitions — build all broker dynamic config keys here to avoid circular initialization
+    // with DynamicBrokerConfig (see KAFKA-16938).
+    private val brokerConfigDef = {
+      val configs = new ConfigDef()
+        // Round minimum value down, to make it easier for users.
+        .define(LeaderReplicationThrottledRateProp, LONG, DefaultReplicationThrottledRate, atLeast(0), MEDIUM, LeaderReplicationThrottledRateDoc)
+        .define(FollowerReplicationThrottledRateProp, LONG, DefaultReplicationThrottledRate, atLeast(0), MEDIUM, FollowerReplicationThrottledRateDoc)
+        .define(ReplicaAlterLogDirsIoMaxBytesPerSecondProp, LONG, DefaultReplicationThrottledRate, atLeast(0), MEDIUM, ReplicaAlterLogDirsIoMaxBytesPerSecondDoc)
+      KafkaConfig.configKeys
+        .filter { case (configName, _) => DynamicBrokerConfig.AllDynamicConfigs.contains(configName) }
+        .foreach { case (_, config) =>
+          configs.define(config.name, config.`type`, config.defaultValue, config.validator,
+            config.importance, config.documentation, config.group, config.orderInGroup, config.width,
+            config.displayName, config.dependents, config.recommender)
+        }
+      configs
+    }
+
+    val nonDynamicProps: Set[String] = KafkaConfig.configNames.toSet -- brokerConfigDef.names.asScala
 
     def names = brokerConfigDef.names
 
