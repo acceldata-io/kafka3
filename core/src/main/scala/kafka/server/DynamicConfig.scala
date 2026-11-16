@@ -73,6 +73,8 @@ object DynamicConfig {
 
     val nonDynamicProps: Set[String] = KafkaConfig.configNames.toSet -- brokerConfigDef.names.asScala
 
+    def configKeys: util.Map[String, ConfigDef.ConfigKey] = brokerConfigDef.configKeys
+
     def names = brokerConfigDef.names
 
     def validate(props: Properties) = DynamicConfig.validate(brokerConfigDef, props, customPropsAllowed = true)
